@@ -1,7 +1,6 @@
 # include "Solver.h"
 #include "ParticleSystem.h"
 #include "Parameters.h"
-#include "glm/common.hpp"
 #include <vector>
 
 
@@ -33,7 +32,7 @@ Solver::updateDensityAndPressure() {
 
 void
 Solver::updateGravity() {
-	for (auto p : m_ps->m_particles) {
+	for (auto& p : m_ps->m_particles) {
 		p.acceleration = glm::vec2(0.0f, -Para::gravity);
 	}
 }
