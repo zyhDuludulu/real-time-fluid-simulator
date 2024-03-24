@@ -8,12 +8,12 @@ ParticleSystem::ParticleSystem(int numParticles, float delta_time)
 
 void 
 ParticleSystem::addParticle() {
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < m_particle_num / 10; j++) {
+	for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < m_particle_num / 20; j++) {
 			Particle p;
-			p.position = glm::vec2(0.1f + i * 0.05f, 0.1f + j * 0.05f);
-			ASSERT((p.position.x > 0 && p.position.x < 1.0 && p.position.y > 0 && p.position.y < 1), "Out of container");
-			p.velocity = glm::vec2(0.1f);
+			p.position = glm::vec2(0.05f + i * 0.005f, 0.1f + j * 0.005f);
+			ASSERT((p.position.x > m_container.left && p.position.x < m_container.right && p.position.y > m_container.lower && p.position.y < m_container.upper), "Out of container" << p.position.x << ' ' << p.position.y);
+			p.velocity = glm::vec2(0.f, 0.f);
 			p.acceleration = glm::vec2(0.0f);
 			p.density = 0.0f;
 			p.pressure = 0.0f;
@@ -43,9 +43,7 @@ ParticleSystem::findNeighbors(uint32_t particle_id, uint32_t block_id) {
 			std::vector<uint32_t> &block = m_container.blocks[block_id + i + j * m_container.num_blocks_x];
 
 			for (uint32_t k : block) {
-				if (k == particle_id) {
-					continue;
-				}
+				if (k == particle_id) { continue; }
 				struct Neighbor n;
 				n.id = k;
 				n.radius = m_particles[k].position - m_particles[particle_id].position;
@@ -79,9 +77,9 @@ void ParticleSystem::findAllNeighbors() {
 
 void 
 ParticleSystem::init() {
-	addParticle();
-	m_container = Container(1.0f, -1.0f, -1.0f, 1.0f, 10, 10);
+	m_container = Container(0.2f, 0.f, 0.f, 0.2f, 10, 10);
 	m_container.initContainer();
+	addParticle();
 	fillContainer();
 }
 

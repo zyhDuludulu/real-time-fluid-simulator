@@ -3,6 +3,7 @@
 #include "Parameters.h"
 #include "Debug.h"
 #include <vector>
+#include <cmath>
 
 
 void
@@ -32,6 +33,7 @@ Solver::updateDensityAndPressure() {
 		m_ps->m_particles[i].density = std::max(density, Para::density0);
 		// update pressure
 		m_ps->m_particles[i].pressure = m_ps->m_stiffness * (powf(m_ps->m_particles[i].density / Para::density0, Para::m_exponent) - 1.f);
+		// DEBUG(m_ps->m_particles[i].pressure);
 	}	
 }
 
@@ -67,20 +69,20 @@ Solver::updatePressure() {
 	std::vector<float> press_div_dens2(m_ps->m_particle_num, 0.0f);
 	for (int i = 0; i < m_ps->m_particle_num; i++) {
 		press_div_dens2[i] = m_ps->m_particles[i].pressure 
-						/ (m_ps->m_particles[i].density * m_ps->m_particles[i].density);
+						/ powf(m_ps->m_particles[i].density, 2);
 	}
 
 	for (int i = 0; i < m_ps->m_particle_num; i++) {
 		if (m_ps->m_neighbors.empty()) { continue; }
 		std::vector<Neighbor>& neighbors = m_ps->m_neighbors[i];
-		glm::vec2 pressure_force(0.f, 0.f);
+		glm::vec2 pressure_force( 0.f);
 		for (auto& n_info : neighbors) {
 			int j = n_info.id;
 			pressure_force += m_ps->m_particles[j].density 
 						* (press_div_dens2[i] + press_div_dens2[j]) 
 						* m_kernel.gradient(n_info.radius);
 		}
-		m_ps->m_particles[i].acceleration -= pressure_force * m_ps->m_volume;
+		m_ps->m_particles[i].acceleration += pressure_force * m_ps->m_volume;
 	}
 }
 

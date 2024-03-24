@@ -1,4 +1,6 @@
 #include <chrono>
+#include <iomanip>
+#include <ostream>
 #include "ParticleSystem.h"
 #include "Parameters.h"
 #include "Debug.h"
@@ -7,7 +9,7 @@
 
 int main() {
 	// init particle system
-    ParticleSystem ps(100);
+    ParticleSystem ps(400);
 	ps.init();
 	DEBUG("Init ParticleSystem");
 
@@ -23,7 +25,7 @@ int main() {
 	int frame = 0;
 	// press 'q' to exit
 	while (!rd.shouldClose()) {
-		DEBUG(frame++);
+		frame++;
 		auto start = std::chrono::high_resolution_clock::now();
 		for (int i = 0; i < Para::step; i++) {
 			// DEBUG("FIND NEIGHBORS");
@@ -35,6 +37,6 @@ int main() {
 		// DEBUG("frame" << frame++);
 		rd.render();
 		auto end = std::chrono::high_resolution_clock::now();
-		DEBUG("fps: " << 1.0 / std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count() << "fps");
+		std::cerr << "\rfps: " << static_cast<float>(1.0 / std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count()) << std::setprecision(4);
 	}
 }

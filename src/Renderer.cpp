@@ -9,7 +9,7 @@ Renderer::Renderer(ParticleSystem* ps) : ps(ps) {
 
 	glViewport(0, 0, 800, 600);
 	glEnable(GL_POINT_SMOOTH);
-	glPointSize(5.0f);
+	glPointSize(15.0f);
 }
 
 Renderer::~Renderer() {
@@ -21,7 +21,7 @@ void Renderer::render() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_POINTS);
 	for (const auto& p : ps->m_particles) {
-		glVertex2f(p.position.x, p.position.y);
+		glVertex2f(p.position.x * 10 - 1.f, p.position.y * 10 - 1.f);
 	}
 	glEnd();
 
