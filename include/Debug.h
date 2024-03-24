@@ -1,3 +1,5 @@
+#include <iostream>
+
 #define DEBUG(x) 						\
 	do { 								\
 		std::cerr << x << std::endl; 	\
