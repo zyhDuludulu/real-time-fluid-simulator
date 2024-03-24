@@ -5,6 +5,7 @@
 #include <vector>
 #include "glm/glm.hpp"
 #include "Container.h"
+#include "Debug.h"
 
 
 struct Particle {
@@ -55,9 +56,9 @@ public:
 	uint32_t m_particle_num 	= 1000;
 	std::vector<Particle> m_particles;				/* all particles will be saved here*/
 	std::vector<std::vector<Neighbor>> m_neighbors; /* neighbors for each particles */
-	
-private:
 	Container m_container;							/* container */
+
+private:
 	float m_delta_time;								/* time step */
 };
 

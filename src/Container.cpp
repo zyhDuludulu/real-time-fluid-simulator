@@ -5,6 +5,7 @@ Container::Container(float upper, float lower, float left, float right, uint32_t
 	: upper(upper), lower(lower), left(left), right(right), num_blocks_x(num_blocks_x), num_blocks_y(num_blocks_y){
 	this->block_size_x = (right - left) / num_blocks_x;
 	this->block_size_y = (upper - lower) / num_blocks_y;
+	this->num_block    = num_blocks_x * num_blocks_y;
 }
 
 uint32_t
@@ -18,7 +19,10 @@ uint32_t
 Container::getBlockId(glm::vec2 pos) const {
 	uint32_t block_x = floor(pos.x / block_size_x);
 	uint32_t block_y = floor(pos.y / block_size_y);
-	return block_x + block_y * num_blocks_x;
+	uint32_t block_id = block_x + block_y * num_blocks_x;
+	block_id = block_id < 0 ? 0 : block_id;
+	block_id = block_id >= 100 ? num_block - 1 : block_id;
+	return block_id;
 }
 
 // May be written in ParticleSystem, add particles to blocks

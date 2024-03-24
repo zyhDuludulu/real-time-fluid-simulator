@@ -9,7 +9,7 @@ class Solver {
 public:
 	Solver() = delete;
 	~Solver() = default;
-	explicit Solver(ParticleSystem *ps) : m_ps(ps) {}
+	explicit Solver(ParticleSystem *ps) : m_ps(ps), m_kernel(m_ps->m_support_radius) {}
 
 	void solve();
 
@@ -19,9 +19,10 @@ private:
 	void updateViscosity();
 	void updatePressure();
 	void updatePosAndVelocity();
+	void updateBoundary();
 
 	ParticleSystem* m_ps;
-	KernelFunc* m_kernel;
+	KernelFunc m_kernel;
 
 };
 

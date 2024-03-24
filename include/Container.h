@@ -18,7 +18,7 @@ public:
 	uint32_t getBlockId(glm::vec2 pos) const;
 
 	float upper, lower, left, right, block_size_x, block_size_y;
-	uint32_t num_blocks_x, num_blocks_y;
+	uint32_t num_blocks_x, num_blocks_y, num_block;
 	std::vector<std::vector<uint32_t>> blocks;
 };
 
