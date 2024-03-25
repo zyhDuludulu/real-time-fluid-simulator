@@ -8,12 +8,12 @@ ParticleSystem::ParticleSystem(int numParticles, float delta_time)
 
 void 
 ParticleSystem::addParticle() {
-	for (int i = 0; i < 20; i++) {
-		for (int j = 0; j < m_particle_num / 20; j++) {
+	for (int i = 0; i < 40; i++) {
+		for (int j = 0; j < m_particle_num / 40; j++) {
 			Particle p;
-			p.position = glm::vec2(0.05f + i * 0.005f, 0.1f + j * 0.005f);
+			p.position = glm::vec2(0.03f + i * 0.005f, 0.05f + j * 0.005f);
 			ASSERT((p.position.x > m_container.left && p.position.x < m_container.right && p.position.y > m_container.lower && p.position.y < m_container.upper), "Out of container" << p.position.x << ' ' << p.position.y);
-			p.velocity = glm::vec2(0.f, 0.f);
+			p.velocity = glm::vec2(2.f, -2.f);
 			p.acceleration = glm::vec2(0.0f);
 			p.density = 0.0f;
 			p.pressure = 0.0f;
@@ -77,7 +77,7 @@ void ParticleSystem::findAllNeighbors() {
 
 void 
 ParticleSystem::init() {
-	m_container = Container(0.2f, 0.f, 0.f, 0.2f, 10, 10);
+	m_container = Container(0.5f, 0.f, 0.f, 0.5f, 10, 10);
 	m_container.initContainer();
 	addParticle();
 	fillContainer();

@@ -9,7 +9,7 @@
 
 int main() {
 	// init particle system
-    ParticleSystem ps(400);
+    ParticleSystem ps(600);
 	ps.init();
 	DEBUG("Init ParticleSystem");
 

@@ -21,7 +21,7 @@ void Renderer::render() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_POINTS);
 	for (const auto& p : ps->m_particles) {
-		glVertex2f(p.position.x * 10 - 1.f, p.position.y * 10 - 1.f);
+		glVertex2f(p.position.x * 4 - 1.f, p.position.y * 4 - 1.f);
 	}
 	glEnd();
 

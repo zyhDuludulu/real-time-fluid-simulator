@@ -47,7 +47,7 @@ Solver::updateGravity() {
 void
 Solver::updateViscosity() {
 	float dim = 2.0;
-	float const_factor = 2.0f * (dim + 2.0f) * m_ps->m_viscosity;
+	float const_factor = (dim + 2.0f) * m_ps->m_viscosity;
 	for (int i = 0; i < m_ps->m_particle_num; i++) {
 		std::vector<Neighbor>& neighbors = m_ps->m_neighbors[i];
 		if (neighbors.empty()) { continue; }
@@ -101,19 +101,19 @@ void Solver::updateBoundary() {
 		Particle & ps = m_ps->m_particles[i];
 		glm::vec2& position = ps.position;
 		bool crush = false;
-		if (position.y < m_ps->m_container.lower + m_ps->m_support_radius) {
+		if (position.y < m_ps->m_container.lower + m_ps->m_particle_radius) {
 			ps.velocity.y = std::abs(ps.velocity.y);
 			crush = true;
 		}
-		if (position.y > m_ps->m_container.upper - m_ps->m_support_radius) {
+		if (position.y > m_ps->m_container.upper - m_ps->m_particle_radius) {
 			ps.velocity.y = -std::abs(ps.velocity.y);
 			crush = true;
 		}
-		if (position.x < m_ps->m_container.left + m_ps->m_support_radius) {
+		if (position.x < m_ps->m_container.left + m_ps->m_particle_radius) {
 			ps.velocity.x = std::abs(ps.velocity.x);
 			crush = true;
 		}
-		if (position.x > m_ps->m_container.right - m_ps->m_support_radius) {
+		if (position.x > m_ps->m_container.right - m_ps->m_particle_radius) {
 			ps.velocity.x = -std::abs(ps.velocity.x);
 			crush = true;
 		}
