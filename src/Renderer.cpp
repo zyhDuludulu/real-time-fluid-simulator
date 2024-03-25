@@ -20,8 +20,8 @@ Renderer::~Renderer() {
 void Renderer::render() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_POINTS);
-	for (const auto& p : ps->m_particles) {
-		glVertex2f(p.position.x * 4 - 1.f, p.position.y * 4 - 1.f);
+	for (const auto& p : ps->m_pos) {
+		glVertex2f(p.x * 4 - 1.f, p.y * 4 - 1.f);
 	}
 	glEnd();
 

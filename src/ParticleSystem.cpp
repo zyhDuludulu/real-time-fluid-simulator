@@ -1,24 +1,34 @@
 #include "ParticleSystem.h"
+#include "Parameters.h"
+#include <cstring>
 
 
-ParticleSystem::ParticleSystem(int numParticles, float delta_time)
-	: m_particle_num(numParticles), m_delta_time(delta_time) {
-	m_neighbors.resize(m_particle_num);
+ParticleSystem::ParticleSystem(float delta_time)
+	: m_delta_time(delta_time) {
+	m_neighbors.resize(PARTICLES_NUM);
+}
+
+void 
+ParticleSystem::init() {
+	// init particles data
+	memset(m_density, 0.f, sizeof(m_density));
+	memset(m_pressure, 0.f, sizeof(m_pressure));
+
+	// Sequence is important below
+	m_container = Container(0.5f, 0.f, 0.f, 0.5f, 20, 20);
+	m_container.initContainer();
+	addParticle();
+	fillContainer();
 }
 
 void 
 ParticleSystem::addParticle() {
-	for (int i = 0; i < 40; i++) {
-		for (int j = 0; j < m_particle_num / 40; j++) {
-			Particle p;
-			p.position = glm::vec2(0.03f + i * 0.005f, 0.05f + j * 0.005f);
-			ASSERT((p.position.x > m_container.left && p.position.x < m_container.right && p.position.y > m_container.lower && p.position.y < m_container.upper), "Out of container" << p.position.x << ' ' << p.position.y);
-			p.velocity = glm::vec2(2.f, -2.f);
-			p.acceleration = glm::vec2(0.0f);
-			p.density = 0.0f;
-			p.pressure = 0.0f;
-			p.press_div_dens2 = 0.0f;
-			m_particles.push_back(p);
+	for (int i = 0; i < PARTICLES_NUM_X; i++) {
+		for (int j = 0; j < PARTICLES_NUM / PARTICLES_NUM_X; j++) {
+			int index = i * PARTICLES_NUM / PARTICLES_NUM_X + j;
+			m_pos[index] = glm::vec2(0.03f + i * 0.005f, 0.05f + j * 0.005f);
+			ASSERT((m_pos[index].x > m_container.left && m_pos[index].x < m_container.right && m_pos[index].y > m_container.lower && m_pos[index].y < m_container.upper), "Out of container" << m_pos[index].x << ' ' << m_pos[index].y);
+			m_velocity[index] = glm::vec2(2.f, -2.f);
 		}
 	}
 }
@@ -26,8 +36,8 @@ ParticleSystem::addParticle() {
 // May be could be written in cuda
 void
 ParticleSystem::update() {
-	for (int i = 0; i < m_particle_num; i++) {
-		uint32_t block_id = m_container.getBlockId(m_particles[i].position.x, m_particles[i].position.y);
+	for (int i = 0; i < PARTICLES_NUM; i++) {
+		uint32_t block_id = m_container.getBlockId(m_pos[i]);
 		findNeighbors(i, block_id);
 	}
 }
@@ -46,10 +56,10 @@ ParticleSystem::findNeighbors(uint32_t particle_id, uint32_t block_id) {
 				if (k == particle_id) { continue; }
 				struct Neighbor n;
 				n.id = k;
-				n.radius = m_particles[k].position - m_particles[particle_id].position;
+				n.radius = m_pos[k] - m_pos[particle_id];
 				n.distance2 = glm::dot(n.radius, n.radius);
 				n.distance = sqrt(n.distance2);
-				if (n.distance < m_support_radius) {
+				if (n.distance < Para::support_radius) {
 					m_neighbors[particle_id].push_back(n);
 				}
 			}
@@ -59,35 +69,24 @@ ParticleSystem::findNeighbors(uint32_t particle_id, uint32_t block_id) {
 
 void ParticleSystem::findAllNeighbors() {
 	m_container.blocks = std::vector<std::vector<uint32_t>>(m_container.num_block, std::vector<uint32_t>(0));
-	for (int i = 0; i < m_particle_num; i++) {
-		auto& particle = m_particles[i];
-		uint32_t block_id = m_container.getBlockId(particle.position);
+	for (int i = 0; i < PARTICLES_NUM; i++) {
+		uint32_t block_id = m_container.getBlockId(m_pos[i]);
 		// DEBUG("shini fault lema? O_o?");
 		m_container.blocks[block_id].push_back(i);
 	}
 	// DEBUG("Finsh adding blocks");
-	m_neighbors = std::vector<std::vector<Neighbor>>(m_particle_num, std::vector<Neighbor>(0));
-	for (int i = 0; i < m_particle_num; i++) {
-		auto& particle = m_particles[i];
-		uint32_t block_id = m_container.getBlockId(particle.position);
+	m_neighbors = std::vector<std::vector<Neighbor>>(PARTICLES_NUM, std::vector<Neighbor>(0));
+	for (int i = 0; i < PARTICLES_NUM; i++) {
+		uint32_t block_id = m_container.getBlockId(m_pos[i]);
 		findNeighbors(i, block_id);
 	}
 	// DEBUG("Find neighbors");
 }
 
-void 
-ParticleSystem::init() {
-	m_container = Container(0.5f, 0.f, 0.f, 0.5f, 10, 10);
-	m_container.initContainer();
-	addParticle();
-	fillContainer();
-}
-
-
 void
 ParticleSystem::fillContainer() {
-	for (int i = 0; i < m_particle_num; i++) {
-		int b_id = m_container.getBlockId(m_particles[i].position);
+	for (int i = 0; i < PARTICLES_NUM; i++) {
+		int b_id = m_container.getBlockId(m_pos[i]);
 		m_container.blocks[b_id].push_back(i);
 	}
 }

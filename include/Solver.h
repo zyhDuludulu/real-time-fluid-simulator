@@ -9,7 +9,7 @@ class Solver {
 public:
 	Solver() = delete;
 	~Solver() = default;
-	explicit Solver(ParticleSystem *ps) : m_ps(ps), m_kernel(m_ps->m_support_radius) {}
+	explicit Solver(ParticleSystem *ps) : m_ps(ps), m_kernel(Para::support_radius) {}
 
 	void solve();
 

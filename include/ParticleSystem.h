@@ -6,16 +6,8 @@
 #include "glm/glm.hpp"
 #include "Container.h"
 #include "Debug.h"
+#include "Parameters.h"
 
-
-struct Particle {
-	glm::vec2 	position;
-	glm::vec2 	velocity;
-	glm::vec2 	acceleration;
-	float 		density;
-	float 		pressure;
-	float 		press_div_dens2;
-};
 
 struct Neighbor {
 	uint32_t id;
@@ -28,7 +20,7 @@ class ParticleSystem {
 public:
 	ParticleSystem() = delete;
 	~ParticleSystem() = default;
-	explicit ParticleSystem(int numParticles, float delta_time = 0.01f);
+	explicit ParticleSystem(float delta_time = 0.01f);
 
 	void update();
 
@@ -44,19 +36,14 @@ private:
 	void fillContainer();
 
 public:
-	float m_support_radius 		= 0.025f;
-	float m_support_radius2 	= m_support_radius * m_support_radius;
-	float m_particle_radius	 	= 0.005f;
-	float m_particle_diameter 	= m_particle_radius * 2.0f;
-	float m_volume 				= 0.8f * m_particle_radius * m_particle_radius;
-	float m_particle_mass 		= 0.02f;
-	float m_viscosity 			= 0.01f;
-	float m_presure_exponent 	= 7.0f;
-	float m_stiffness 			= 50.0f;
-	uint32_t m_particle_num 	= 1000;
-	std::vector<Particle> m_particles;				/* all particles will be saved here*/
 	std::vector<std::vector<Neighbor>> m_neighbors; /* neighbors for each particles */
 	Container m_container;							/* container */
+	float 		m_density 		[PARTICLES_NUM];
+	float 		m_pressure		[PARTICLES_NUM];
+	float 		m_pres_per_dens2[PARTICLES_NUM];
+	glm::vec2 	m_acceleration	[PARTICLES_NUM];
+	glm::vec2 	m_velocity		[PARTICLES_NUM];
+	glm::vec2 	m_pos			[PARTICLES_NUM];
 
 private:
 	float m_delta_time;								/* time step */
