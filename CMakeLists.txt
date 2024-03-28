@@ -7,13 +7,20 @@ project(real-time-fluid-simulator)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_BUILD_TYPE "Release")
+# set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 file(GLOB SOURCE "src/*.cpp")
+file(GLOB CUDA "src/*.cu")
+file(GLOB GLAD "lib/glad/src/glad.c")
 
 # add the executable
-add_executable(${PROJECT_NAME} ${SOURCE})
+add_executable(${PROJECT_NAME} ${SOURCE} ${CUDA} ${GLAD})
+
+# glad
+include_directories(${CMAKE_SOURCE_DIR}/lib/glad/include)
 
 # glfw
 option(GLFW_BUILD_TESTS off)

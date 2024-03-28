@@ -15,7 +15,7 @@ ParticleSystem::init() {
 	memset(m_pressure, 0.f, sizeof(m_pressure));
 
 	// Sequence is important below
-	m_container = Container(0.5f, 0.f, 0.f, 0.5f, 20, 20);
+	m_container = Container(0.5f, 0.f, 0.f, 0.5f, 10, 10);
 	m_container.initContainer();
 	addParticle();
 	fillContainer();
@@ -26,7 +26,7 @@ ParticleSystem::addParticle() {
 	for (int i = 0; i < PARTICLES_NUM_X; i++) {
 		for (int j = 0; j < PARTICLES_NUM / PARTICLES_NUM_X; j++) {
 			int index = i * PARTICLES_NUM / PARTICLES_NUM_X + j;
-			m_pos[index] = glm::vec2(0.03f + i * 0.005f, 0.05f + j * 0.005f);
+			m_pos[index] = glm::vec2(0.03f + i * 0.004f, 0.05f + j * 0.004f);
 			ASSERT((m_pos[index].x > m_container.left && m_pos[index].x < m_container.right && m_pos[index].y > m_container.lower && m_pos[index].y < m_container.upper), "Out of container" << m_pos[index].x << ' ' << m_pos[index].y);
 			m_velocity[index] = glm::vec2(2.f, -2.f);
 		}

@@ -1,15 +1,21 @@
 #include "Renderer.h"
+#include "GLFW/glfw3.h"
 
 
 Renderer::Renderer(ParticleSystem* ps) : ps(ps) {
 	glfwInit();
 	window = glfwCreateWindow(800, 600, "2D Fluid Simulation", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
-	glewInit();
+	if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
+		throw std::runtime_error("Failed to initialize GLAD");
+	}
 
 	glViewport(0, 0, 800, 600);
-	glEnable(GL_POINT_SMOOTH);
-	glPointSize(15.0f);
+	
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glDisable(GL_DEPTH_TEST);
+	
 }
 
 Renderer::~Renderer() {
@@ -19,11 +25,11 @@ Renderer::~Renderer() {
 
 void Renderer::render() {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glBegin(GL_POINTS);
-	for (const auto& p : ps->m_pos) {
-		glVertex2f(p.x * 4 - 1.f, p.y * 4 - 1.f);
-	}
-	glEnd();
+	glClearColor(0.3f, 0.3f, 0.5f, 1.0f);
+
+	// glUseProgram(shader_program);
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_POINTS, 0, PARTICLES_NUM);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -31,4 +37,18 @@ void Renderer::render() {
 
 bool Renderer::shouldClose() {
 	return glfwWindowShouldClose(window) || glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS;
+}
+
+void Renderer::bindVAO() {
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * PARTICLES_NUM, ps->m_pos, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), static_cast<void*>(nullptr));
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(0);
 }

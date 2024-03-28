@@ -1,8 +1,8 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
-#define PARTICLES_NUM 600
-#define PARTICLES_NUM_X 30
+#define PARTICLES_NUM 2048
+#define PARTICLES_NUM_X 40
 
 namespace Para {
 	const float support_radius 		= 0.025f;
