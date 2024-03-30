@@ -6,6 +6,4 @@
 
 ## Result
 
-<video width="480" height="360" controls>
-	<source src="https://github.com/zyhDuludulu/real-time-fluid-simulator/blob/main/video/milk.gif">
-</video>
+![Demo](https://github.com/zyhDuludulu/real-time-fluid-simulator/blob/main/video/milk.gif?raw=true)
