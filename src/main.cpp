@@ -1,5 +1,4 @@
 #include <chrono>
-#include <ostream>
 #include "ParticleSystem.h"
 #include "Parameters.h"
 #include "Debug.h"
@@ -25,20 +24,54 @@ int main() {
 	// init shader
 	// expand shader expands the particles to squares
 	Shader expand_shader = Shader();
-	expand_shader.loadVGFShader("../shader/milk.vs", "../shader/milk.gs", "../shader/milk.fs");
+	expand_shader.loadVGFShader("../shader/expand.vs", "../shader/expand.gs", "../shader/expand.fs");
+	// Save the result to a texture, then process the texture
+	Shader milk_shader = Shader();
+	milk_shader.loadVFShader("../shader/milk.vs", "../shader/milk.fs");
+	milk_shader.setInt("textureSdf", 0);
 
 	// press 'q' to exit
 	while (!rd.shouldClose()) {
+
+		//////////////   Simulation   //////////////
 		auto start = std::chrono::high_resolution_clock::now();
 		for (int i = 0; i < Para::step; i++) {
 			ps.findAllNeighbors();
 			sv.solve();
 		}
-		// rd.update();
-		expand_shader.use();
+		
+		//////////////     Render     //////////////
+
+		// Step 1: expand the particles to squares and draw the result to a texture
+		glBindFramebuffer(GL_FRAMEBUFFER, rd.fbo);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 		rd.bindVAO();
-		rd.render();
+
+		expand_shader.use();
+		glEnable(GL_PROGRAM_POINT_SIZE);
+		glBindVertexArray(rd.vao);
+		glDrawArrays(GL_POINTS, 0, PARTICLES_NUM);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindVertexArray(0);
+
+		// Step 2: blur the texture and draw the milk to the screen
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glDisable(GL_DEPTH_TEST);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		milk_shader.use();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, rd.m_texure_sdf);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		//////////////      Draw      //////////////
 		auto end = std::chrono::high_resolution_clock::now();
-		std::cout << "fps: " << 1e6 / std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
+		float fps = 1e6 / std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+		char title[100];
+		sprintf(title, "2D Fluid Simulation - %.2f FPS", fps);
+		glfwSetWindowTitle(rd.window, title);
+		glfwSwapBuffers(rd.window);
+		glfwPollEvents();
 	}
 }

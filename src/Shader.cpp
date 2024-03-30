@@ -180,3 +180,8 @@ void
 Shader::use() const {
 	glUseProgram(id);
 }
+
+void
+Shader::setInt(const char* name, int value) const {
+	glUniform1i(glGetUniformLocation(id, name), value);
+}

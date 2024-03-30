@@ -1,7 +1,7 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
-#define PARTICLES_NUM 2048
+#define PARTICLES_NUM 1600
 #define PARTICLES_NUM_X 40
 
 namespace Para {

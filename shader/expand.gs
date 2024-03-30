@@ -5,7 +5,7 @@ layout (triangle_strip, max_vertices = 4) out;
 
 out vec2 center;
 
-float size = 0.02;
+float size = 0.03;
 
 void main() {
 	center = gl_in[0].gl_Position.xy;

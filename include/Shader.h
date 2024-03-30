@@ -11,6 +11,8 @@ public:
 	void loadVGFShader(const char* vertexPath, const char* geometryPath, const char* fragmentPath) const;
 	void use() const;
 
+	void setInt(const char* name, int value) const;
+
 	unsigned int id;
 };
 

@@ -1,12 +1,37 @@
 #version 330 core
 
-in vec2 center;
+in vec2 texCoord;
+
+uniform sampler2D textureSdf;
 
 out vec4 FragColor;
 
-vec4 white = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+vec4 gMilkColor = vec4(1.0, 1.0, 0.9, 1.0);
+vec4 gBakGroundColor = vec4(0.5, 0.8, 1.0, 1.0);
+ivec2 gKernelSize = ivec2(11, 11);
 
-void main()
-{
-	FragColor = white;
+float gScreenWidth = 1000.0;
+float gScreenHeight = 1000.0;
+
+void main() {
+	// FragColor = texture(textureSdf, texCoord);
+    
+    ivec2 halfKernelSize = gKernelSize / 2;
+    vec4 sumColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+    for (int i = -halfKernelSize.x; i < gKernelSize.x - halfKernelSize.x; i++) {
+        for(int j = -halfKernelSize.y; j < gKernelSize.y - halfKernelSize.y; j++) {
+            float x = i / gScreenWidth * 2.0;
+            float y = j / gScreenHeight * 2.0;
+            sumColor += texture(textureSdf, texCoord + vec2(x, y));
+        }
+    }
+    FragColor = sumColor / (gKernelSize.x * gKernelSize.y);
+
+    if (FragColor.x > 0.2) {
+        FragColor = gMilkColor;
+    }
+    else {
+        FragColor = gBakGroundColor;
+    }
 }

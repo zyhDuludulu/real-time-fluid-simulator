@@ -2,7 +2,6 @@
 #define RENDERER_H
 
 #include "ParticleSystem.h"
-#include "Shader.h"
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 
@@ -12,19 +11,23 @@ public:
 	explicit Renderer(ParticleSystem* ps);
 	~Renderer();
 
-	void render();
-
-	bool shouldClose();
+	bool shouldClose() const;
 
 	bool loadShader(const char* vertexPath, const char* fragmentPath);
 
-	void bindVAO();
+	void bindVAO() const;
+
+
+	unsigned int fbo;
+	unsigned int vao;
+	unsigned int vbo;
+
+	unsigned int m_texure_sdf;
+	GLFWwindow* window;
 
 private:
-	GLFWwindow* window;
 	ParticleSystem* ps;
-	unsigned int VAO;
-	unsigned int VBO;
+	
 };
 
 #endif // RENDERER_H

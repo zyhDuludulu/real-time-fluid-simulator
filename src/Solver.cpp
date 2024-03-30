@@ -9,25 +9,48 @@
 
 void
 Solver::solve() {
-	updateDensityAndPressure();
-	updateGravity();
-	updateViscosity();
-	updatePressure();
-	updatePosAndVelocity();
-	updateBoundary();
+	updateDensityAndPressure();		// 799900
+	updateGravity();				// 3800
+	updateViscosity();				// 3944800
+	updatePressure();				// 2124300
+	updatePosAndVelocity();			// 3000
+	updateBoundary();				// 6903600
 }
+
+// For debugging
+// void
+// Solver::solve() {
+// 	auto start = std::chrono::high_resolution_clock::now();
+// 	updateDensityAndPressure();		// 799900
+// 	auto period1 = std::chrono::high_resolution_clock::now() - start;
+// 	start = std::chrono::high_resolution_clock::now();
+// 	updateGravity();				// 3800
+// 	auto period2 = std::chrono::high_resolution_clock::now() - start;
+// 	start = std::chrono::high_resolution_clock::now();
+// 	updateViscosity();				// 3944800
+// 	auto period3 = std::chrono::high_resolution_clock::now() - start;
+// 	start = std::chrono::high_resolution_clock::now();
+// 	updatePressure();				// 2124300
+// 	auto period4 = std::chrono::high_resolution_clock::now() - start;
+// 	start = std::chrono::high_resolution_clock::now();
+// 	updatePosAndVelocity();			// 3000
+// 	auto period5 = std::chrono::high_resolution_clock::now() - start;
+// 	start = std::chrono::high_resolution_clock::now();
+// 	updateBoundary();				// 6903600
+// 	auto period6 = std::chrono::high_resolution_clock::now() - start;
+// 	auto total = period1 + period2 + period3 + period4 + period5 + period6;
+// 	// DEBUG the persentage of each part
+// 	DEBUG(period1.count() << " " << period2.count() << " " << period3.count() << " " << period4.count() << " " << period5.count() << " " << period6.count() << " " << total.count());
+// }
 
 void
 Solver::updateDensityAndPressure() {
 	for (int i = 0; i < PARTICLES_NUM; i++) {
-		// DEBUG("BG " << i);
 		float density = 0.0f;
 		if (!m_ps->m_neighbors[i].empty()) {
-			// DEBUG("in");
 			for (const auto & j : m_ps->m_neighbors[i]) {
 				density += m_kernel.value(j.distance);
 			}
-			// DEBUG("out");
 			density *= Para::volume * Para::density0;
 		}
 		// no expantion
@@ -39,7 +62,6 @@ Solver::updateDensityAndPressure() {
 
 void
 Solver::updateGravity() {
-	// set gravity to (0, -gravity)
 	for (auto & i : m_ps->m_acceleration)
 		i = glm::vec2(0.f, -Para::gravity);
 }
@@ -47,7 +69,7 @@ Solver::updateGravity() {
 void
 Solver::updateViscosity() {
 	float dim = 2.0;
-	float const_factor = (dim + 2.0f) * Para::viscosity;
+	float const_factor = 1.3f * (dim + 2.0f) * Para::viscosity;
 	for (int i = 0; i < PARTICLES_NUM; i++) {
 		std::vector<Neighbor>& neighbors = m_ps->m_neighbors[i];
 		if (neighbors.empty()) { continue; }
@@ -102,7 +124,7 @@ void Solver::updateBoundary() {
 		glm::vec2& position = m_ps->m_pos[i];
 		bool crush = false;
 		if (position.y < m_ps->m_container.lower + Para::particle_radius) {
-			velocity.y = std::abs(velocity.y);
+			velocity.y = std::abs(velocity.y) + 0.03f;
 			crush = true;
 		}
 		if (position.y > m_ps->m_container.upper - Para::particle_radius) {

@@ -31,11 +31,14 @@ KernelFunc::KernelFunc(float h) {
 
 float
 KernelFunc::value(float r) const {
-	int i = std::abs(r) * m_buffer_size.x / m_h;
-	if (i >= m_buffer_size.x) {
+	float i = std::abs(r) / m_h * m_buffer_size.x;
+	if (i + 1 >= m_buffer_size.x) {
 		return 0.0f;
 	}
-	return m_value_buffer[i];
+	// interpolate
+	int floor = i;
+	float t = (r / m_h * m_buffer_size.x - i);
+	return (1.0f - t) * m_value_buffer[floor] + t * m_value_buffer[floor + 1];
 }
 
 glm::vec2

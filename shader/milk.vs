@@ -1,7 +1,22 @@
-#version 330 core
-layout (location = 0) in vec2 aPos;
+#version 330
 
-void main()
-{
-	gl_Position = vec4(aPos.x * 4.0 - 1.0, aPos.y * 4.0 - 1.0, 0.0, 1.0);
+vec2 position[4] = {
+	vec2(-1.0, -1.0),
+	vec2( 1.0, -1.0),
+	vec2(-1.0,  1.0),
+	vec2( 1.0,  1.0)
+};
+
+vec2 texCoords[4] = {
+	vec2(0.0, 0.0),
+	vec2(1.0, 0.0),
+	vec2(0.0, 1.0),
+	vec2(1.0, 1.0)
+};
+
+out vec2 texCoord;
+
+void main() {
+	gl_Position = vec4(position[gl_VertexID], 0.0, 1.0);
+	texCoord = texCoords[gl_VertexID];
 }
